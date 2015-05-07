@@ -69,4 +69,11 @@ module DaftCcValidator
   def cc_type
     PROVIDERS.find{ |provider, regex| regex.match(read_attribute(self.class.cc_number)) }
   end
+
+  def get_attr attr_name
+    read_attribute(self.class.send(attr_name))
+  end
+
+
+
 end
