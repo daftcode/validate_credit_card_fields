@@ -18,6 +18,8 @@ module DaftCcValidator
     base.class_eval do
       cattr_accessor :cc_number, :cc_cvv, :cc_month,
         :cc_year, :cc_owner, :cc_providers
+      attr_accessor :cc_type
+
       validate :validate_ccf
     end
   end
@@ -35,45 +37,58 @@ module DaftCcValidator
   end
 
   def validate_ccf
+    @cc_type = get_cc_type
+    validate_fields_presence
     validate_cc_number
-    validate_cc_owner
+    validate_cc_cvv
     validate_cc_expiry_date
-  end
+    #debugger
+  end 
 
   private
 
-  def validate_cc_number
-    provider = cc_type
-    if provider.nil?
-      self.errors.add(self.class.cc_number, 'credit card number is invalid')
-    elsif !self.class.cc_providers.blank? && !self.class.cc_providers.include?(provider)
-      self.errors.add(self.class.cc_number, 'provider is not supported')
+  def validate_fields_presence
+    [cc_number, cc_cvv, cc_month, cc_year, cc_owner].each do |field|
+      add_error(field, 'can\'t be empty') if read_attribute(field).blank?
     end
   end
 
-  def validate_cc_owner
-    if read_attribute(self.class.cc_owner).blank?
-      errors.add(self.class.cc_owner, 'owner can\'t be blank')
+  def validate_cc_number
+    err = if @cc_type.nil?
+      'is invalid'
+    elsif !cc_providers.blank? && !cc_providers.include?(@cc_type)
+      'provider is not supported'
+    end
+    add_error(cc_number, err) if err
+  end
+
+  def validate_cc_cvv
+    length = (@cc_type == :amex) ? 4 : 3
+    if @cc_type.nil? || /\d{#{length}}/.match cc_cvv
+      add_error(cc_cvv, 'is invalid')
     end
   end
 
   def validate_cc_expiry_date
-    year = read_attribute(self.class.cc_year)
-    month = read_attribute(self.class.cc_month)
-    if Date.new(year, month).end_of_month.past?
-      errors.add(self.class.cc_owner, 'date is past')
+    year = "20#{read_attribute(cc_year)}".to_i
+    month = read_attribute(cc_month).to_i
+    date = Date.new(year, month).end_of_month
+    if date.past?
+      field = if date.year < Date.today.year
+        cc_year
+      else
+        cc_month
+      end
+      add_error(field, 'date is past')
     end
   end
 
-
-  def cc_type
-    PROVIDERS.find{ |provider, regex| regex.match(read_attribute(self.class.cc_number)) }
+  def add_error(field, message)
+    errors.add(field, message) if errors[field].blank?
   end
 
-  def get_attr attr_name
-    read_attribute(self.class.send(attr_name))
+  def get_cc_type
+    PROVIDERS.find{ |_, regex| regex.match(read_attribute(cc_number)) }.first
   end
-
-
 
 end
