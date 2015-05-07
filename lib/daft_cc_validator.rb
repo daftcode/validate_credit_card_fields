@@ -14,30 +14,59 @@ module DaftCcValidator
 
   def self.included(base)
     base.extend ClassMethods
+    
     base.class_eval do
+      cattr_accessor :cc_number, :cc_cvv, :cc_month,
+        :cc_year, :cc_owner, :cc_providers
       validate :validate_ccf
     end
   end
 
   module ClassMethods
-    
+
     def validate_credit_card_fields(options={})
-      @@cc_number = options[:number]
-      @@cc_cvv = options[:cvv]
-      @@cc_month = options[:month]
-      @@cc_year = options[:year]
-      @@cc_owner = options[:owner]
-      @@cc_providers = options[:providers]
+      self.cc_number = options[:number]
+      self.cc_cvv = options[:cvv]
+      self.cc_month = options[:month]
+      self.cc_year = options[:year]
+      self.cc_owner = options[:owner]
+      self.cc_providers = options[:providers]
     end
   end
 
   def validate_ccf
     validate_cc_number
+    validate_cc_owner
+    validate_cc_expiry_date
   end
 
   private
 
   def validate_cc_number
-    self.class::PROVIDERS.values.select{ |regex| regex.match @@cc_number }
+    provider = cc_type
+    if provider.nil?
+      self.errors.add(self.class.cc_number, 'credit card number is invalid')
+    elsif !self.class.cc_providers.blank? && !self.class.cc_providers.include?(provider)
+      self.errors.add(self.class.cc_number, 'provider is not supported')
+    end
+  end
+
+  def validate_cc_owner
+    if read_attribute(self.class.cc_owner).blank?
+      errors.add(self.class.cc_owner, 'owner can\'t be blank')
+    end
+  end
+
+  def validate_cc_expiry_date
+    year = read_attribute(self.class.cc_year)
+    month = read_attribute(self.class.cc_month)
+    if Date.new(year, month).end_of_month.past?
+      errors.add(self.class.cc_owner, 'date is past')
+    end
+  end
+
+
+  def cc_type
+    PROVIDERS.find{ |provider, regex| regex.match(read_attribute(self.class.cc_number)) }.first
   end
 end
