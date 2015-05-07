@@ -67,6 +67,6 @@ module DaftCcValidator
 
 
   def cc_type
-    PROVIDERS.find{ |provider, regex| regex.match(read_attribute(self.class.cc_number)) }.first
+    PROVIDERS.find{ |provider, regex| regex.match(read_attribute(self.class.cc_number)) }
   end
 end
