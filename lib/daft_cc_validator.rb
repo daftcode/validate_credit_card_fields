@@ -41,6 +41,8 @@ module DaftCcValidator
     validate_fields_presence
     validate_cc_number
     validate_cc_cvv
+    validate_cc_month
+    validate_cc_year
     validate_cc_expiry_date
   end 
 
@@ -65,6 +67,18 @@ module DaftCcValidator
     length = (@cc_type == :amex) ? 4 : 3
     if @cc_type.nil? || /\d{#{length}}/.match(cc_cvv)
       add_error(cc_cvv, 'is invalid')
+    end
+  end
+
+  def validate_cc_month
+    unless /\d{2}/.match cc_month || cc_month.between?(1, 12)
+      add_error(cc_month, 'is invalid')
+    end
+  end
+
+  def validate_cc_year
+    unless /\d{2}/.match cc_year
+      add_error(cc_year, 'is invalid')
     end
   end
 
