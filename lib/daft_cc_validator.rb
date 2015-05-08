@@ -1,6 +1,9 @@
-require "daft_cc_validator/version"
+require 'daft_cc_validator/version'
+require 'rails'
 
 module DaftCcValidator
+
+  require 'daft_cc_validator/railtie' if defined?(Rails)
 
   PROVIDERS = {
     visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
@@ -14,18 +17,15 @@ module DaftCcValidator
 
   def self.included(base)
     base.extend ClassMethods
-    
     base.class_eval do
       cattr_accessor :cc_number, :cc_cvv, :cc_month,
         :cc_year, :cc_owner, :cc_providers
       attr_accessor :cc_type
-
       validate :validate_ccf
     end
   end
 
   module ClassMethods
-
     def validate_credit_card_fields(options={})
       self.cc_number = options[:number]
       self.cc_cvv = options[:cvv]
@@ -42,7 +42,6 @@ module DaftCcValidator
     validate_cc_number
     validate_cc_cvv
     validate_cc_expiry_date
-    #debugger
   end 
 
   private
@@ -64,7 +63,7 @@ module DaftCcValidator
 
   def validate_cc_cvv
     length = (@cc_type == :amex) ? 4 : 3
-    if @cc_type.nil? || /\d{#{length}}/.match cc_cvv
+    if @cc_type.nil? || /\d{#{length}}/.match(cc_cvv)
       add_error(cc_cvv, 'is invalid')
     end
   end
@@ -88,7 +87,7 @@ module DaftCcValidator
   end
 
   def get_cc_type
-    PROVIDERS.find{ |_, regex| regex.match(read_attribute(cc_number)) }.first
+    PROVIDERS.find{ |_, regex| regex.match(read_attribute(cc_number)) }.try(:first)
   end
 
 end
