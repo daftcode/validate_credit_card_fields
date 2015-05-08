@@ -6,7 +6,7 @@ require 'daft_cc_validator/version'
 Gem::Specification.new do |spec|
   spec.name          = "daft_cc_validator"
   spec.version       = DaftCcValidator::VERSION
-  spec.authors       = ["Piotr Kruczek", "Jacek Zachariasz"]
+  spec.authors       = ["Piotr Kruczek", "Jacek Zachariasz", "Jan Grodowski"]
   spec.email         = ["daftcode@daftcode.pl"]
   spec.summary       = %q{Credit card validation with all dependant fileds}
   spec.description   = %q{Such desc}
