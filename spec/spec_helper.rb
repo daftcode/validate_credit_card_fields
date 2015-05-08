@@ -1,9 +1,10 @@
 require 'bundler/setup'
 Bundler.setup
 
+require 'rails'
+require 'active_model'
 require 'byebug'
 require 'daft_cc_validator'
-require 'rails'
 require 'dummy/user'
 
 # require 'daft_cc_validator_spec' # and any other gems you need
