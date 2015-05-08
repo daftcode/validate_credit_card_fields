@@ -104,6 +104,6 @@ module ActiveModel
   	  def validate_credit_card_fields(options={})
   	  	validates_with DaftCcValidator, options
       end
-  	end
+    end
   end
 end
