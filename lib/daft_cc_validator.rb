@@ -57,19 +57,19 @@ module ActiveModel
 
   	  def validate_cc_cvv
   	    length = (@cc_type == :amex) ? 4 : 3
-  	    unless !@cc_type.nil? && /\d{#{length}}/.match(@record[cc_cvv])
+  	    unless !@cc_type.nil? && /\A\d{#{length}}\z/.match(@record[cc_cvv])
   	      add_error(cc_cvv, 'is invalid')
   	    end
   	  end
 
   	  def validate_cc_month
-  	    unless /\d{2}/.match(@record[cc_month]) && @record[cc_month].to_i.between?(1, 12)
+  	    unless /\A\d{2}\z/.match(@record[cc_month]) && @record[cc_month].to_i.between?(1, 12)
   	      add_error(cc_month, 'is invalid')
   	    end
   	  end
 
   	  def validate_cc_year
-  	    unless /\d{2}/.match @record[cc_year]
+  	    unless /\A\d{2}\z/.match @record[cc_year]
   	      add_error(cc_year, 'is invalid')
   	    end
   	  end
