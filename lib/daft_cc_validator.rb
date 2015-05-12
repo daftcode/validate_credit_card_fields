@@ -75,7 +75,7 @@ module ActiveModel
   	  end
 
   	  def validate_cc_expiry_date
-        if @record[cc_year] && @record[cc_month]
+        if (@record.errors.messages.keys & [cc_year, cc_month]).empty?
     	    year = "20#{@record[cc_year]}".to_i
     	    month = @record[cc_month].to_i
     	    date = Date.new(year, month).beginning_of_month
