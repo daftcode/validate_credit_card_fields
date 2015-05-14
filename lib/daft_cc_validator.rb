@@ -63,13 +63,13 @@ module ActiveModel
       end
 
       def validate_cc_month
-        unless /\A\d{2}\z/.match(@record[cc_month].to_s) && @record[cc_month].to_i.between?(1, 12)
+        unless (/\A\d{2}\z/).match(@record[cc_month].to_s) && @record[cc_month].to_i.between?(1, 12)
           add_error(cc_month, 'invalid')
         end
       end
 
       def validate_cc_year
-        unless /\A\d{2}\z/.match @record[cc_year].to_s
+        unless (/\A\d{2}\z/).match @record[cc_year].to_s
           add_error(cc_year, 'invalid')
         end
       end
@@ -78,7 +78,7 @@ module ActiveModel
         if (@record.errors.messages.keys & [cc_year, cc_month]).empty?
           year = "20#{@record[cc_year]}".to_i
           month = @record[cc_month].to_i
-          date = Date.new(year, month).beginning_of_month
+          date = Date.new(year, month).end_of_month
           if date.past?
             field = if date.year < Date.today.year
               cc_year
