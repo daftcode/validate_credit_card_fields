@@ -1,3 +1,5 @@
+class CCTypeError < StandardError; end
+
 require 'daft_cc_validator/version'
 
 module ActiveModel
@@ -29,6 +31,7 @@ module ActiveModel
 
       def validate(record)
         @record = record
+        check_fields_format
         @cc_type = get_cc_type
         validate_fields_presence
         validate_cc_number
@@ -57,19 +60,19 @@ module ActiveModel
 
       def validate_cc_cvv
         length = (@cc_type == :amex) ? 4 : 3
-        unless !@cc_type.nil? && (/\A\d{#{length}}\z/).match(@record[cc_cvv].to_s)
+        unless !@cc_type.nil? && (/\A\d{#{length}}\z/).match(@record[cc_cvv])
           add_error(cc_cvv, 'invalid')
         end
       end
 
       def validate_cc_month
-        unless (/\A\d{2}\z/).match(@record[cc_month].to_s) && @record[cc_month].to_i.between?(1, 12)
+        unless (/\A\d{2}\z/).match("%02d" % @record[cc_month].to_i) && @record[cc_month].to_i.between?(1, 12)
           add_error(cc_month, 'invalid')
         end
       end
 
       def validate_cc_year
-        unless (/\A\d{2}\z/).match @record[cc_year].to_s
+        unless (/\A\d{2}\z/).match @record[cc_year]
           add_error(cc_year, 'invalid')
         end
       end
@@ -102,6 +105,14 @@ module ActiveModel
         ::I18n.t("errors.messages.#{error}")
       end
 
+      def check_fields_format
+        invalid_attr = [cc_number, cc_cvv, cc_month, cc_year, cc_owner].find do |attr|
+          !@record[attr].is_a?(NilClass) && !@record[attr].is_a?(String)
+        end
+        if invalid_attr
+          raise CCTypeError, "#{invalid_attr} is a #{@record[invalid_attr].class}, String expected."
+        end
+      end
     end
 
     module HelperMethods
