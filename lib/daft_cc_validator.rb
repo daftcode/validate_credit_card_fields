@@ -45,7 +45,7 @@ module ActiveModel
 
       def validate_fields_presence
         [cc_number, cc_cvv, cc_month, cc_year, cc_owner].each do |field|
-          add_error(field, 'blank') if @record[field].blank?
+          add_error(field, 'blank') if @record.public_send(field).blank?
         end
       end
 
@@ -60,27 +60,27 @@ module ActiveModel
 
       def validate_cc_cvv
         length = (@cc_type == :amex) ? 4 : 3
-        unless !@cc_type.nil? && (/\A\d{#{length}}\z/).match(@record[cc_cvv])
+        unless !@cc_type.nil? && (/\A\d{#{length}}\z/).match(@record.public_send(cc_cvv))
           add_error(cc_cvv, 'invalid')
         end
       end
 
       def validate_cc_month
-        unless (/\A\d{2}\z/).match("%02d" % @record[cc_month].to_i) && @record[cc_month].to_i.between?(1, 12)
+        unless (/\A\d{2}\z/).match("%02d" % @record.public_send(cc_month).to_i) && @record.public_send(cc_month).to_i.between?(1, 12)
           add_error(cc_month, 'invalid')
         end
       end
 
       def validate_cc_year
-        unless (/\A\d{2}\z/).match @record[cc_year]
+        unless (/\A\d{2}\z/).match @record.public_send(cc_year)
           add_error(cc_year, 'invalid')
         end
       end
 
       def validate_cc_expiry_date
         if (@record.errors.messages.keys & [cc_year, cc_month]).empty?
-          year = "20#{@record[cc_year]}".to_i
-          month = @record[cc_month].to_i
+          year = "20#{@record.public_send(cc_year)}".to_i
+          month = @record.public_send(cc_month).to_i
           date = Date.new(year, month).end_of_month
           if date.past?
             field = if date.year < Date.today.year
@@ -98,7 +98,7 @@ module ActiveModel
       end
 
       def get_cc_type
-        PROVIDERS.find{ |_, regex| regex.match(@record[cc_number]) }.try(:first)
+        PROVIDERS.find{ |_, regex| regex.match(@record.public_send(cc_number)) }.try(:first)
       end
 
       def translate_error error
@@ -107,10 +107,10 @@ module ActiveModel
 
       def check_fields_format
         invalid_attr = [cc_number, cc_cvv, cc_month, cc_year, cc_owner].find do |attr|
-          !@record[attr].is_a?(NilClass) && !@record[attr].is_a?(String)
+          !@record.public_send(attr).is_a?(NilClass) && !@record.public_send(attr).is_a?(String)
         end
         if invalid_attr
-          raise CCTypeError, "#{invalid_attr} is a #{@record[invalid_attr].class}, String expected."
+          raise CCTypeError, "#{invalid_attr} is a #{@record.public_send(invalid_attr).class}, String expected."
         end
       end
     end
