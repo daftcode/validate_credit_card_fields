@@ -166,6 +166,11 @@ describe DaftCcValidator do
         should_have_error :credit_card_year, 'is invalid'
       end
 
+      it 'cannot be past' do
+        dummy.credit_card_year = (Date.today.year-1).to_s[2..-1]
+        should_have_error :credit_card_year, 'is invalid'
+      end
+
       it 'accepts without leading zeros' do
         dummy.credit_card_month = "1"
         dummy.credit_card_year = (Date.today.year+1).to_s[2..-1]
