@@ -1,3 +1,3 @@
 module DaftCcValidator
-  VERSION = "0.9.4.c"
+  VERSION = "0.9.4.d"
 end
