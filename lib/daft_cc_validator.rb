@@ -72,7 +72,7 @@ module ActiveModel
       end
 
       def validate_cc_year
-        unless (/\A\d{2}\z/).match @record.public_send(cc_year) && @record.public_send(cc_year).to_i => Date.today.year-2000
+        unless (/\A\d{2}\z/).match @record.public_send(cc_year) && @record.public_send(cc_year).to_i >= Date.today.year-2000
           add_error(cc_year, 'invalid')
         end
       end
