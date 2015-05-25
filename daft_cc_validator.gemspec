@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = DaftCcValidator::VERSION
   spec.authors       = ["Piotr Kruczek", "Jacek Zachariasz", "Jan Grodowski", "Patryk Pastewski"]
   spec.email         = ["daftcode@daftcode.pl"]
-  spec.summary       = %q{Credit card validation with all dependant files}
+  spec.summary       = %q{Credit card validation with all dependant fields}
   spec.description   = %q{Such desc}
   spec.homepage      = ""
   spec.license       = "MIT"
