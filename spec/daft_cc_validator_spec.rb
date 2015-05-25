@@ -223,4 +223,61 @@ describe DaftCcValidator do
     end
   end
 
+  describe 'validation options' do
+    let(:default_fields) { [:cc_number, :cc_cvv, :cc_month, :cc_year, :cc_owner] }
+    let(:default_options) { { providers: [:amex, :visa] } }
+    let(:fields) { default_fields }
+    let(:options) { default_options }
+
+    let(:klass) {
+      _fields = fields
+      _opt = options
+      Class.new do
+        include ActiveModel::Validations
+        attr_accessor *_fields
+        validate_credit_card_fields _opt
+      end
+    }
+
+    let(:dummy) { klass.new }
+
+    context 'without settings' do
+      it 'uses default field names' do
+        expect{dummy.valid?}.not_to raise_error
+      end
+    end
+
+    context 'with custom field' do
+      let(:owner_field) { :custom_owner_field }
+      let(:fields) { default_fields + [owner_field] }
+
+      before {dummy.send("#{owner_field}=", 'John Test')}
+
+      context 'passed as symbol' do
+        let(:options) { default_options.merge({owner: owner_field}) }
+        it 'uses custom field name' do
+          has_valid owner_field
+        end
+      end
+
+      context 'passed in hash' do
+        let(:options) { default_options.merge({owner: {field: owner_field}}) }
+        it 'uses custom field name' do
+          has_valid owner_field
+        end
+      end
+    end
+
+    context 'with custom error message' do
+      let(:error_msg) { 'custom error message' }
+      let(:options) { default_options.merge({owner: {blank: error_msg}}) }
+      it 'uses custom error message' do
+        dummy.cc_owner = nil
+        should_have_error :cc_owner, error_msg
+      end
+    end
+
+
+  end
+
 end

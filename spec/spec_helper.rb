@@ -1,7 +1,7 @@
 require 'bundler/setup'
 Bundler.setup
 
-require 'rails'
+require 'active_model'
 require 'active_model'
 require 'byebug'
 require 'daft_cc_validator'
