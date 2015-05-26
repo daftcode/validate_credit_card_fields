@@ -63,6 +63,12 @@ describe DaftCcValidator do
         dummy.credit_card_number = nil
         expect{dummy.valid?}.not_to raise_error{CCTypeError}
       end
+
+      it 'must have valid checksum (Luhn algorithm)' do
+        dummy.credit_card_number = '4111111111111110' # => visa
+        should_have_error :credit_card_number, 'is invalid'
+      end
+
     end
 
     context 'cvv' do

@@ -50,7 +50,7 @@ module ActiveModel
       end
 
       def validate_cc_number
-        err = if @cc_type.nil?
+        err = if @cc_type.nil? || !luhn_algorithm_valid?
           'invalid'
         elsif !cc_providers.blank? && !cc_providers.include?(@cc_type)
           'not_supported'
@@ -91,6 +91,17 @@ module ActiveModel
             add_error(field, 'invalid')
           end
         end
+      end
+
+      def luhn_algorithm_valid?
+        s1 = s2 = 0
+        @record.public_send(cc_number).to_s.reverse.chars.each_slice(2) do |odd, even|
+          s1 += odd.to_i
+          double = even.to_i * 2
+          double -= 9 if double >= 10
+          s2 += double
+        end
+        (s1 + s2) % 10 == 0
       end
 
       def add_error(field, message)
