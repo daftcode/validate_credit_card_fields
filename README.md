@@ -1,6 +1,7 @@
 # DaftCcValidator
 
-TODO: Write a gem description
+Simple gem helpful in validating standard credit card forms.
+Consists of validation for credit card, its cvv, expiration date and owner. Also allows provider limitation.
 
 ## Installation
 
@@ -18,7 +19,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Inside your model:
+
+    validate_credit_card_fields number: :your_cc_number_field,
+                                cvv: :your_ccv_field,
+                                month: :your_cc_month_field,
+                                year: :your_cc_year_field,
+                                owner: :your_cc_owner_field,
+                                providers: [:amex, :visa]
+
+In place of `:your_something_field` place keys representing desired value in your model.
+
+`providers` are used to specify provider limitations. Supply it with a list of **supported** providers (those you want to be valid). Leaving it blank will allow any of the accepted providers below:
+
+    :visa, :master_card, :maestro, :diners_club, :amex, :discover, :jcb
+
 
 ## Contributing
 
