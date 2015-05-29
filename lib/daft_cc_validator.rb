@@ -1,26 +1,24 @@
-class CCTypeError < StandardError;
-end
+class CCTypeError < StandardError; end
 
 require 'daft_cc_validator/version'
-require 'monads/optional'
 require 'date'
+require 'active_support/core_ext/object/try'
 
 module ActiveModel
   module Validations
 
     class DaftCcValidator < Validator
-      include Monads
 
       ERROR_TYPES = [:invalid, :blank, :not_supported]
 
       PROVIDERS = {
-          visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
-          master_card: /^5[1-5][0-9]{14}$/,
-          maestro: /(^6759[0-9]{2}([0-9]{10})$)|(^6759[0-9]{2}([0-9]{12})$)|(^6759[0-9]{2}([0-9]{13})$)/,
-          diners_club: /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
-          amex: /^3[47][0-9]{13}$/,
-          discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
-          jcb: /^(?:2131|1800|35\d{3})\d{11}$/
+        visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
+        master_card: /^5[1-5][0-9]{14}$/,
+        maestro: /(^6759[0-9]{2}([0-9]{10})$)|(^6759[0-9]{2}([0-9]{12})$)|(^6759[0-9]{2}([0-9]{13})$)/,
+        diners_club: /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
+        amex: /^3[47][0-9]{13}$/,
+        discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
+        jcb: /^(?:2131|1800|35\d{3})\d{11}$/
       }
 
       attr_accessor :options, :cc_number, :cc_cvv, :cc_month,
@@ -120,13 +118,11 @@ module ActiveModel
       end
 
       def get_cc_type
-        opt_cc_type = Optional.new(PROVIDERS.find { |_, regex| regex.match(@record.public_send(cc_number)) })
-        opt_cc_type.and_then { |o| Optional.new(o.first) }.value
+        PROVIDERS.find{ |_, regex| regex.match(@record.public_send(cc_number)) }.try(:first)
       end
 
       def error_message(field, message)
-        opt_msg = Optional.new(custom_messages[field])
-        opt_msg.and_then { |o| Optional.new(o[message]) }.value || translate_error(message)
+        custom_messages[field].try(:[], message) || translate_error(message)
       end
 
       def translate_error error
