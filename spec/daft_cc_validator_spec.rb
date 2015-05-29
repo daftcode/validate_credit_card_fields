@@ -63,6 +63,24 @@ describe DaftCcValidator do
         dummy.credit_card_number = nil
         expect{dummy.valid?}.not_to raise_error{CCTypeError}
       end
+
+      describe 'Luhn algorithm' do
+
+        it 'is invalid with bad checksum' do
+          dummy.credit_card_number = '4111111111111110' # => visa
+          should_have_error :credit_card_number, 'is invalid'
+        end
+
+        it 'has no errors with valid card number' do
+          valid_card_numbers = %w(4111111111111111 378282246310005 4012888888881881 371449635398431)
+          valid_card_numbers.each do |ccn|
+            dummy.credit_card_number = ccn
+            has_valid :credit_card_number
+          end
+        end
+
+      end
+
     end
 
     context 'cvv' do
