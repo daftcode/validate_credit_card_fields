@@ -34,6 +34,10 @@ In place of `:your_something_field` place keys representing desired value in you
 
     :visa, :master_card, :maestro, :diners_club, :amex, :discover, :jcb
 
+When a field name isn't presented, validator will use default values:
+
+    :cc_number, :cc_cvv, :cc_month, :cc_year, :cc_owner
+
 
 ## Contributing
 
