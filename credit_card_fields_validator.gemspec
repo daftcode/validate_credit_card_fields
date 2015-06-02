@@ -1,15 +1,15 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'daft_cc_validator/version'
+require 'credit_card_fields_validator/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "daft_cc_validator"
-  spec.version       = DaftCcValidator::VERSION
+  spec.name          = "validate_credit_card_fields"
+  spec.version       = CreditCardFieldsValidator::VERSION
   spec.authors       = ["Piotr Kruczek", "Jacek Zachariasz", "Jan Grodowski", "Patryk Pastewski"]
   spec.email         = ["daftcode@daftcode.pl"]
   spec.summary       = %q{Credit card validation with all dependant fields}
-  spec.description   = %q{Such desc}
+  spec.description   = %q{Simple gem helpful in validating standard credit card forms}
   spec.homepage      = ""
   spec.license       = "MIT"
 

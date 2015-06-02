@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in daft_cc_validator.gemspec
+# Specify your gem's dependencies in credit_card_fields_validator.gemspec
 gemspec

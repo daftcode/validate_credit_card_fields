@@ -1,13 +1,13 @@
 class CCTypeError < StandardError; end
 
-require 'daft_cc_validator/version'
+require 'credit_card_fields_validator/version'
 require 'date'
 require 'active_support/core_ext/object/try'
 
 module ActiveModel
   module Validations
 
-    class DaftCcValidator < Validator
+    class CreditCardFieldsValidator < Validator
 
       ERROR_TYPES = [:invalid, :blank, :not_supported]
 
@@ -152,7 +152,7 @@ module ActiveModel
 
     module HelperMethods
       def validate_credit_card_fields(options={})
-        validates_with DaftCcValidator, options
+        validates_with CreditCardFieldsValidator, options
       end
     end
   end

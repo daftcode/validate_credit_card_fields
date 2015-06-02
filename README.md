@@ -7,7 +7,7 @@ Consists of validation for credit card, its cvv, expiration date and owner. Also
 
 Add this line to your application's Gemfile:
 
-    gem 'daft_cc_validator'
+    gem 'validate_credit_card_fields'
 
 And then execute:
 
@@ -15,7 +15,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install daft_cc_validator
+    $ gem install validate_credit_card_fields
 
 ## Usage
 
@@ -41,7 +41,7 @@ When a field name isn't presented, validator will use default values:
 
 ## Contributing
 
-1. Fork it ( http://github.com/<my-github-username>/daft_cc_validator/fork )
+1. Fork it ( http://github.com/<my-github-username>/validate_credit_card_fields/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
