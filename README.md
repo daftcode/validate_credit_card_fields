@@ -1,4 +1,4 @@
-# DaftCcValidator
+# validate_credit_card_fields
 
 Simple gem helpful in validating standard credit card forms.
 Consists of validation for credit card, its cvv, expiration date and owner. Also allows provider limitation.
