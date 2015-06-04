@@ -13,7 +13,7 @@ def has_valid *fields
 end
 
 
-describe CreditCardFieldsValidator do
+describe ValidateCreditCardFields do
 
   context 'Implemented model\'s credit card' do
     let(:dummy) { User.new }

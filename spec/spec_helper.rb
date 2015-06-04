@@ -3,7 +3,7 @@ Bundler.setup
 
 require 'active_model'
 require 'byebug'
-require 'credit_card_fields_validator'
+require 'validate_credit_card_fields'
 require 'dummy/user'
 
 RSpec.configure do |config|

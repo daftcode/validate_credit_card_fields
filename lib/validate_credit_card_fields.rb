@@ -1,6 +1,6 @@
 class CCTypeError < StandardError; end
 
-require 'credit_card_fields_validator/version'
+require 'validate_credit_card_fields/version'
 require 'date'
 require 'active_support/core_ext/object/try'
 
@@ -8,7 +8,6 @@ module ActiveModel
   module Validations
 
     class CreditCardFieldsValidator < Validator
-
       ERROR_TYPES = [:invalid, :blank, :not_supported]
 
       PROVIDERS = {
