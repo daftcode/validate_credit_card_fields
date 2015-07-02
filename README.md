@@ -32,7 +32,7 @@ In place of `:your_something_field` place keys representing desired value in you
 
 `providers` are used to specify provider limitations. Supply it with a list of **supported** providers (those you want to be valid). Leaving it blank will allow any of the accepted providers below:
 
-    :visa, :master_card, :maestro, :diners_club, :amex, :discover, :jcb
+    :visa, :master_card, :maestro, :diners_club, :amex, :discover, :jcb, :solo, :china_union, :dankort
 
 When a field name isn't presented, validator will use default values:
 
