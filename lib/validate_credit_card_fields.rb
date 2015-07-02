@@ -13,11 +13,14 @@ module ActiveModel
       PROVIDERS = {
         visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
         master_card: /^5[1-5][0-9]{14}$/,
-        maestro: /(^6759[0-9]{2}([0-9]{10})$)|(^6759[0-9]{2}([0-9]{12})$)|(^6759[0-9]{2}([0-9]{13})$)/,
+        maestro: /^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$/,
         diners_club: /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
         amex: /^3[47][0-9]{13}$/,
         discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
-        jcb: /^(?:2131|1800|35\d{3})\d{11}$/
+        jcb: /^(?:2131|1800|35\d{3})\d{11}$/,
+        solo: /(^(6334)[5-9](\d{11}$|\d{13,14}$)) |(^(6767)(\d{12}$|\d{14,15}$))/,
+        china_union: /^62[0-5]\d{13,16}$/,
+        dankort: /^5019\d{12}$/
       }
 
       attr_accessor :options, :cc_number, :cc_cvv, :cc_month,
@@ -113,6 +116,7 @@ module ActiveModel
       end
 
       def luhn_algorithm_valid?
+        return true if @cc_type == :china_union
         s1 = s2 = 0
         @record.public_send(cc_number).to_s.reverse.chars.each_slice(2) do |odd, even|
           s1 += odd.to_i
