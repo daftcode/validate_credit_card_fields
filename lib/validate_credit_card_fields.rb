@@ -24,7 +24,8 @@ module ActiveModel
       }
 
       attr_accessor :options, :cc_number, :cc_cvv, :cc_month,
-                    :cc_year, :cc_owner, :cc_providers, :cc_type, :custom_messages
+                    :cc_year, :cc_owner, :cc_providers, :cc_type, :custom_messages,
+                    :cc_first_name, :cc_last_name, :using_owner
 
       def initialize(options={})
         @options = options
@@ -33,8 +34,14 @@ module ActiveModel
         @cc_cvv = init_option(:cvv, :cc_cvv)
         @cc_month = init_option(:month, :cc_month)
         @cc_year = init_option(:year, :cc_year)
-        @cc_owner = init_option(:owner, :cc_owner)
         @cc_providers = options[:providers]
+        @using_owner = !options[:owner].nil? || options[:first_name].nil? || options[:last_name].nil?
+        if @using_owner
+          @cc_owner = init_option(:owner, :cc_owner)
+        else
+          @cc_first_name = init_option(:first_name, :cc_first_name)
+          @cc_last_name = init_option(:last_name, :cc_last_name)
+        end
       end
 
       def init_option(key, default)
@@ -65,8 +72,12 @@ module ActiveModel
 
       private
 
+      def validated_fields
+        [cc_number, cc_cvv, cc_month, cc_year] + (using_owner ? [cc_owner] : [cc_first_name, cc_last_name])
+      end      
+
       def validate_fields_presence
-        [cc_number, cc_cvv, cc_month, cc_year, cc_owner].each do |field|
+        validated_fields.each do |field|
           add_error(field, :blank) if @record.public_send(field).blank?
         end
       end
@@ -144,7 +155,7 @@ module ActiveModel
       end
 
       def check_fields_format
-        invalid_attr = [cc_number, cc_cvv, cc_month, cc_year, cc_owner].find do |attr|
+        invalid_attr = validated_fields.find do |attr|
           !@record.public_send(attr).is_a?(NilClass) && !@record.public_send(attr).is_a?(String)
         end
         if invalid_attr

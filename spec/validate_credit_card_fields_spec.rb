@@ -36,6 +36,46 @@ describe ValidateCreditCardFields do
       end
     end
 
+    context 'first and last name instead of owner' do
+      let(:dummy) { NamedUser.new }
+
+      context 'first_name' do
+
+        it 'must be present' do
+          dummy.first_name = nil
+          should_have_error :first_name, 'can\'t be blank'
+        end
+
+        it 'raises an error if it\'s not a string' do
+          dummy.first_name = 1
+          expect{dummy.valid?}.to raise_error{CCTypeError}
+        end
+
+        it 'not raising error if nil' do
+          dummy.first_name = nil
+          expect{dummy.valid?}.not_to raise_error{CCTypeError}
+        end
+      end
+
+      context 'last_name' do
+
+        it 'must be present' do
+          dummy.last_name = nil
+          should_have_error :last_name, 'can\'t be blank'
+        end
+
+        it 'raises an error if it\'s not a string' do
+          dummy.last_name = 1
+          expect{dummy.valid?}.to raise_error{CCTypeError}
+        end
+
+        it 'not raising error if nil' do
+          dummy.last_name = nil
+          expect{dummy.valid?}.not_to raise_error{CCTypeError}
+        end
+      end
+    end
+
     context 'number' do
 
       it 'must be present' do
@@ -295,7 +335,37 @@ describe ValidateCreditCardFields do
       end
     end
 
+    context 'with both first and last name provided' do
+      let(:fields) { [:cc_number, :cc_cvv, :cc_month, :cc_year, :cc_first_name, :cc_last_name] }
+      let(:options) { {first_name: :cc_first_name, last_name: :cc_last_name} }
+      before do
+        dummy.cc_first_name = 'Tomasz'        
+        dummy.cc_last_name = 'Czosnek'
+      end
 
+      it 'raises no owner errors' do
+        has_valid :cc_owner
+      end
+
+      it 'raises first name errors' do
+        dummy.cc_first_name = ''
+        should_have_error :cc_first_name, 'can\'t be blank'
+      end
+
+      it 'raises last name errors' do
+        dummy.cc_last_name = ''
+        should_have_error :cc_last_name, 'can\'t be blank'
+      end
+    end
+
+    context 'without first or last name provided' do
+      let(:options) { {last_name: 'whatever'} }
+
+      it 'falls back to owner requirement' do
+        dummy.valid?
+        expect(dummy.errors).to include(:cc_owner)
+      end
+    end
   end
 
 end
