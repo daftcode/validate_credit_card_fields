@@ -37,6 +37,13 @@ In place of `:your_something_field` place keys representing desired value in you
 When a field name isn't presented, validator will use default values:
 
     :cc_number, :cc_cvv, :cc_month, :cc_year, :cc_owner
+    
+Now possible to validate credit card owner using first and last names, for example:
+    
+    validate_credit_card_fields first_name: :your_first_name_field,
+                                last_name: :your_last_name_field
+
+If both `:first_name` and `:last_name` keys are provided, those two fields will be validated, otherwise it'll fall back to `:owner`.
 
 
 ## Contributing
