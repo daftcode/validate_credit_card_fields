@@ -86,7 +86,7 @@ module ActiveModel
         err = if @cc_type.nil? || !luhn_algorithm_valid?
                 :invalid
               elsif !cc_providers.blank? && !cc_providers.include?(@cc_type)
-                :not_supported
+                :inclusion
               end
         add_error(cc_number, err) if err
       end
