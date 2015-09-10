@@ -129,7 +129,7 @@ module ActiveModel
       def luhn_algorithm_valid?
         return true if @cc_type == :china_union
         s1 = s2 = 0
-        @record.public_send(cc_number).to_s.reverse.chars.each_slice(2) do |odd, even|
+        get_cc_number.to_s.reverse.chars.each_slice(2) do |odd, even|
           s1 += odd.to_i
           double = even.to_i * 2
           double -= 9 if double >= 10
@@ -143,7 +143,11 @@ module ActiveModel
       end
 
       def get_cc_type
-        PROVIDERS.find{ |_, regex| regex.match(@record.public_send(cc_number)) }.try(:first)
+        PROVIDERS.find{ |_, regex| regex.match(get_cc_number) }.try(:first)
+      end
+
+      def get_cc_number
+        @record.public_send(cc_number).try(:delete, ' ')
       end
 
       def error_message(field, message)
