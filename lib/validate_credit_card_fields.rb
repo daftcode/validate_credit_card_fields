@@ -139,7 +139,7 @@ module ActiveModel
       end
 
       def add_error(field, message)
-        @record.errors.add(field, error_message(field, message)) if @record.errors[field].blank?
+        @record.errors.add(field, message, message: error_message(field, message)) if @record.errors[field].blank?
       end
 
       def get_cc_type
