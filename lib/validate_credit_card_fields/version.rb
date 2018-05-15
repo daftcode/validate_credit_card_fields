@@ -1,3 +1,3 @@
 module ValidateCreditCardFields
-  VERSION = "0.9.8.2"
+  VERSION = "0.9.8.3"
 end
